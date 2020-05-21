@@ -62,7 +62,7 @@
         var img_bounds_Indekspromene_0 = [[41.8354051913,18.9598079537],[46.1773125055,23.1107030836]];
         var overlay_Indekspromene_0 = new L.imageOverlay(img_Indekspromene_0, img_bounds_Indekspromene_0);
         bounds_group.addLayer(overlay_Indekspromene_0);
-        map.addLayer(overlay_Indekspromene_0);
+        //map.addLayer(overlay_Indekspromene_0);
         
         function pop_DravnagranicaSrbije_1(feature, layer) {
             var popupContent = '<table>\
@@ -108,7 +108,7 @@
         
         map.addLayer(layer_DravnagranicaSrbije_1);
         var baseMaps = {};
-        L.control.layers(baseMaps,{'<img src="legend/DravnagranicaSrbije_1.png" /> Državna granica Srbije': layer_DravnagranicaSrbije_1,"Indeks promene": overlay_Indekspromene_0,}).addTo(map);
+        L.control.layers(baseMaps,{'<img src="legend/DravnagranicaSrbije_1.png" /> Državna granica Srbije': layer_DravnagranicaSrbije_1,"Indeks promene": mytile,}).addTo(map);
         setBounds();
         L.ImageOverlay.include({
             getBounds: function () {
