@@ -36,9 +36,6 @@
       width: 7px;
     }
 
-    .legend img {
-      height: 500px;
-    }
   </style>
   <title></title>
 </head>
@@ -79,7 +76,6 @@
           "key": "4_lot_coverage_change"
         }
       }
-      let layerName = '';
 
       let params = new URLSearchParams(window.location.search);
       if (params.has('l')) {
@@ -151,8 +147,8 @@
       map.createPane('pane_DravnagranicaSrbije_1');
       map.getPane('pane_DravnagranicaSrbije_1').style.zIndex = 401;
       map.getPane('pane_DravnagranicaSrbije_1').style['mix-blend-mode'] = 'normal';
+      
       var layer_DravnagranicaSrbije_1 = new L.geoJson(json_DravnagranicaSrbije_1, {
-        attribution: '<a href=""></a>',
         pane: 'pane_DravnagranicaSrbije_1',
         onEachFeature: pop_DravnagranicaSrbije_1,
         style: style_DravnagranicaSrbije_1_0,
