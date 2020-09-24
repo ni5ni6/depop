@@ -1,4 +1,4 @@
-var json_DravnagranicaSrbije_1 = {
+var state_boundary = {
 "type": "FeatureCollection",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [

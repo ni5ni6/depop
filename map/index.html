@@ -22,30 +22,26 @@
       margin: 0;
     }
 
-    #basemapslidercontainer {
-      position: absolute;
-      top: 150px;
-      right: 10px;
-      z-index: 1000;
-    }
-
-    #basemapslider {
+    /* #basemapslider {
       font-size: 62.5%;
       margin: 14px;
       height: 125px;
       width: 7px;
-    }
+    } */
 
+    #basemapslider {
+      width: 120px;
+    }
+    .slider {
+      padding-left: 14px;
+      padding-right: 14px;
+    }
   </style>
   <title></title>
 </head>
 
 <body>
-  <div id="map">
-    <div id="basemapslidercontainer">
-      <div id="basemapslider"></div>
-    </div>
-  </div>
+  <div id="map"></div>
 
   <script src="js/qgis2web_expressions.js"></script>
   <script src="js/leaflet.js"></script>
@@ -57,22 +53,24 @@
   <script src="js/labelgun.min.js"></script>
   <script src="js/labels.js"></script>
   <script src="js/leaflet-measure.js"></script>
-  <script src="data/DravnagranicaSrbije_1.js"></script>
+  <script src="data/state_boundary.js"></script>
+  <script src="data/municipality_boundaries.js"></script>
+  <script src="data/settlement_boundaries.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
   <script>
     $(document).ready(function () {
       var layers = {
         "2": {
-          "name": "Population change",
+          "name": "Population change index in Serbia 1975–2015",
           "key": "2_population_change"
         },
         "3": {
-          "name": "Population density",
+          "name": "Population density in Serbia 2015",
           "key": "3_population_density"
         },
         "4": {
-          "name": "Lot coverage change",
+          "name": "Lot coverage change index in Serbia 1975-2014",
           "key": "4_lot_coverage_change"
         }
       }
@@ -83,100 +81,111 @@
         document.title = layer.name;
       }
 
-      $("#basemapslider").slider({
-        animate: true,
-        value: 1,
-        orientation: "vertical",
-        min: 0,
-        max: 1,
-        step: 0.1,
-        slide: function (event, ui) {
-          mytile.setOpacity(ui.value);
-        }
-      });
-
-      $('#basemapslider').mousedown(function () {
-        map.dragging.disable();
-      })
-
-      $('#basemapslider').mouseup(function () {
-        map.dragging.enable();
-      })
-
       var map = L.map('map', {
         zoomControl: true,
         maxZoom: 12,
         minZoom: 1
       })
-      .fitBounds([
-        [41.8354051913, 18.9598079537], [46.1773125055, 23.1107030836]
-      ]);
+        .fitBounds([
+          [41.8354051913, 18.9598079537], [46.1773125055, 23.1107030836]
+        ]);
 
       map.attributionControl.addAttribution('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a>');
 
-      var basemap0 = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png', {
+      var basemap = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
         maxZoom: 12
       });
-      basemap0.addTo(map);
+      basemap.addTo(map);
 
-      function pop_DravnagranicaSrbije_1(feature, layer) {
-        var popupContent = '<table>\
-                        <tr>\
-                            <td colspan="2">' + (feature.properties['Drzava'] !== null ? Autolinker.link(String(feature.properties['Drzava'])) : '') + '</td>\
-                        </tr>\
-                        <tr>\
-                            <td colspan="2">' + (feature.properties['Površina'] !== null ? Autolinker.link(String(feature.properties['Površina'])) : '') + '</td>\
-                        </tr>\
-                    </table>';
-        layer.bindPopup(popupContent, { maxHeight: 400 });
-      }
-
-      function style_DravnagranicaSrbije_1_0() {
+      function style_state_boundary(feature) {
         return {
-          pane: 'pane_DravnagranicaSrbije_1',
+          weight: 1,
           opacity: 1,
           color: 'rgba(0,0,0,1.0)',
           dashArray: '',
           lineCap: 'square',
           lineJoin: 'bevel',
-          weight: 1.0,
           fillOpacity: 0,
         }
       }
-      map.createPane('pane_DravnagranicaSrbije_1');
-      map.getPane('pane_DravnagranicaSrbije_1').style.zIndex = 401;
-      map.getPane('pane_DravnagranicaSrbije_1').style['mix-blend-mode'] = 'normal';
+      function style_municipality_boundaries(feature) {
+        return {
+          weight: 0.4,
+          opacity: 1,
+          color: '#333',
+          dashArray: '',
+          lineCap: 'square',
+          lineJoin: 'bevel',
+          fillOpacity: 0,
+        };
+      }
+      function style_settlement_boundaries(feature) {
+        return {
+          weight: 0.2,
+          opacity: 1,
+          color: '#666',
+          dashArray: '',
+          lineCap: 'square',
+          lineJoin: 'bevel',
+          fillOpacity: 0,
+        };
+      }
+		
+      // LAYER FUNCTIONALITY
+      var state = new L.geoJson(state_boundary, { style: style_state_boundary });    
+      var municipalities = new L.geoJson(municipality_boundaries, { style: style_municipality_boundaries });
+      var settlements = new L.geoJson(settlement_boundaries, { style: style_settlement_boundaries });
       
-      var layer_DravnagranicaSrbije_1 = new L.geoJson(json_DravnagranicaSrbije_1, {
-        pane: 'pane_DravnagranicaSrbije_1',
-        onEachFeature: pop_DravnagranicaSrbije_1,
-        style: style_DravnagranicaSrbije_1_0,
-      });
+      // LAYER CONTROL	
+      var overlays = {
+        "State boundary": state,
+        "Municipality boundaries": municipalities,
+        "Settlement boundaries": settlements
+      };
+      L.control.layers(null, overlays, {collapsed: false}).addTo(map);
+      state.addTo(map);
 
+      // TILES
       var mytile = L.tileLayer(`tiles/${layer.key}/{z}/{x}/{y}.png`, {
         maxZoom: 12,
         tms: false,
         attribution: 'Generated by QTiles'
       }).addTo(map);
 
-      map.addLayer(layer_DravnagranicaSrbije_1);
-      var baseMaps = {};
-
-      L.control.layers(baseMaps, {
-        '<img src="legend/DravnagranicaSrbije_1.png" /> Državna granica Srbije': layer_DravnagranicaSrbije_1,
-        "Indeks promene": mytile
-      }).addTo(map);
-
       // LEGEND
-      var legend = L.control({ position: 'bottomleft' });
+      var legend = L.control({ position: 'topleft' });
       legend.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'info legend');
-        div.innerHTML = `<h4>${layer.name}</h4><img src="legend/${layer.key}.jpg" />`;
+        div.innerHTML = `<h4>${layer.name}</h4><img src="legend/${layer.key}.png" />`;
         return div;
       };
-
       legend.addTo(map);
+
+      // OPACITY SCROLL
+      var opacity = L.control({ position: 'topright' });
+      opacity.onAdd = function(map) {
+        var div = L.DomUtil.create('div', 'slider info');
+        div.innerHTML = '<label><div id="basemapslider"></div></label>';
+        return div;
+      };
+      opacity.addTo(map);
+
+      $("#basemapslider").slider({
+        animate: true,
+        value: 1,
+        min: 0,
+        max: 1,
+        step: 0.2,
+        slide: function (event, ui) {
+          mytile.setOpacity(ui.value);
+        }
+      }).mousedown(function () {
+        map.dragging.disable();
+      }).mouseup(function () {
+        map.dragging.enable();
+      })
+
     })
   </script>
 </body>
