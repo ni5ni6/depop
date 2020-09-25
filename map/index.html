@@ -22,19 +22,30 @@
       margin: 0;
     }
 
-    /* #basemapslider {
-      font-size: 62.5%;
-      margin: 14px;
-      height: 125px;
-      width: 7px;
-    } */
-
     #basemapslider {
       width: 120px;
+      margin-left: 6px;
+      margin-right: 6px;
     }
-    .slider {
-      padding-left: 14px;
-      padding-right: 14px;
+    .slider h5 {
+      margin-bottom: 8px;
+    }
+
+    .info {
+      border: 2px solid rgba(0,0,0,0.2);
+      background-color: #fff;
+      background-clip: padding-box;
+    }
+    h4 {
+      margin-top:4px;
+      margin-bottom:4px;
+      font-weight: 500;
+    }
+    h5 {
+      margin-top:4px;
+      margin-bottom:4px;
+      font-weight: 500;
+      font-size: 12px;
     }
   </style>
   <title></title>
@@ -63,14 +74,17 @@
       var layers = {
         "2": {
           "name": "Population change index in Serbia 1975–2015",
+          "legend": "Population change index in Serbia 1975–2015 [%]",
           "key": "2_population_change"
         },
         "3": {
           "name": "Population density in Serbia 2015",
+          "legend": "Population density in Serbia 2015 [inh./km<sup>2</sup>]",
           "key": "3_population_density"
         },
         "4": {
           "name": "Lot coverage change index in Serbia 1975-2014",
+          "legend": "Lot coverage change index in Serbia 1975-2014 [%]",
           "key": "4_lot_coverage_change"
         }
       }
@@ -139,12 +153,14 @@
       
       // LAYER CONTROL	
       var overlays = {
-        "State boundary": state,
-        "Municipality boundaries": municipalities,
-        "Settlement boundaries": settlements
+        "State": state,
+        "Municipality": municipalities,
+        "Settlement": settlements
       };
       L.control.layers(null, overlays, {collapsed: false}).addTo(map);
       state.addTo(map);
+
+      $('<h5>Administrative boundaries</h5>').insertBefore('div.leaflet-control-layers-base');
 
       // TILES
       var mytile = L.tileLayer(`tiles/${layer.key}/{z}/{x}/{y}.png`, {
@@ -157,7 +173,7 @@
       var legend = L.control({ position: 'topleft' });
       legend.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'info legend');
-        div.innerHTML = `<h4>${layer.name}</h4><img src="legend/${layer.key}.png" />`;
+        div.innerHTML = `<h4>${layer.legend}</h4><img src="legend/${layer.key}.png" />`;
         return div;
       };
       legend.addTo(map);
@@ -166,7 +182,7 @@
       var opacity = L.control({ position: 'topright' });
       opacity.onAdd = function(map) {
         var div = L.DomUtil.create('div', 'slider info');
-        div.innerHTML = '<label><div id="basemapslider"></div></label>';
+        div.innerHTML = '<h5>Map layer opacity</h5><label><div id="basemapslider"></div></label>';
         return div;
       };
       opacity.addTo(map);
