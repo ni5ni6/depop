@@ -179,7 +179,7 @@
       };
       legend.addTo(map);   
       
-      if(L.Browser.chrome) {
+      if(L.Browser.mobile) {
         var legendButton = L.control({ position: 'topleft' });
         legendButton.onAdd = function(map) {
           var div = L.DomUtil.create('div', 'info legend');
