@@ -174,9 +174,40 @@
       legend.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'info legend');
         div.innerHTML = `<h4>${layer.legend}</h4><img src="legend/${layer.key}.png" />`;
+        div.id = 'legend';
         return div;
       };
-      legend.addTo(map);
+      legend.addTo(map);   
+      
+      if(L.Browser.chrome) {
+        var legendButton = L.control({ position: 'topleft' });
+        legendButton.onAdd = function(map) {
+          var div = L.DomUtil.create('div', 'info legend');
+          div.innerHTML = '<i class="fa fa-list"></i>';
+          div.id = 'legendButton';
+          return div;
+        };
+        legendButton.addTo(map);
+
+        $('#legend').hide();
+        $('#legendButton').show();
+        $('#legendButton').on("mouseover", function(){
+          $('#legend').show();
+          $('#legendButton').hide();
+        })
+        $('#legend').on("mouseleave", function(){
+          $('#legendButton').show();
+          $('#legend').hide();
+        })
+      }
+
+      $('#legend-icon-div').hover(
+        function() {
+          $('#legend').show();
+        }, function() {
+          $('#legend').hide();
+        }
+      )
 
       // OPACITY SCROLL
       var opacity = L.control({ position: 'topright' });
